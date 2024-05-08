@@ -1,0 +1,144 @@
+#include <iostream>
+#include <cmath>
+#include <queue>
+#include <vector>
+#include <array>
+
+using namespace std;
+
+struct Node {
+    int x;
+    int y;
+    int g;
+    int h; 
+    int f; 
+    int prev_x;
+    int prev_y;
+
+    bool operator<(const Node& other) const {
+        return f > other.f;
+    }
+};
+
+
+int heuristic(int x1, int y1, int x2, int y2) {
+    return abs(sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)));
+}
+
+void printPathRecursive(int x, int y, const vector<Node>& pq1,string optimal_path[4][4]) {
+  
+    if (x == -1 && y == -1) {
+        return;
+    }
+
+  
+    for (int i = 0; i < pq1.size(); ++i) {
+        if (pq1[i].x == x && pq1[i].y == y) {
+            optimal_path[x][y]="#";
+            cout << "(" << x << "," << y << ") ";
+
+  
+            printPathRecursive(pq1[i].prev_x, pq1[i].prev_y, pq1,optimal_path);
+            return;
+        }
+    }
+}
+
+void printPath(int goal_x, int goal_y, const vector<Node>& pq1,string optimal_path[4][4]) {
+    
+    printPathRecursive(goal_x, goal_y, pq1,optimal_path);
+ cout<<endl;
+}
+
+
+int main() {
+    int graph[4][4] = {
+        {0, 0, 0, 0},
+        {1, 0, 1, 0},
+        {1, 0, 1, 0},
+        {0, 0, 1, 0}
+    };
+
+    int res[4][4];
+    int start_x = 0;
+    int start_y = 0;
+    int goal_x  = 3; 
+    int goal_y  = 3;
+    
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (graph[i][j] == 0) {
+                res[i][j] = heuristic(i, j, goal_x, goal_y); 
+            } else { 
+                res[i][j] = -1; 
+            }
+        }
+    }
+
+    priority_queue<Node> pq;
+    pq.push({start_x, start_y, 0, res[start_x][start_y], res[start_x][start_y],-1,-1});
+    
+    vector<Node> pq1;
+
+    string path[4][4];
+    string optimal_path[4][4];
+    
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (res[i][j] == -1) {
+                path[i][j] = "1";
+                optimal_path[i][j]="1";
+            } else {
+                path[i][j] = "0";
+                optimal_path[i][j]="0";
+            }
+        }
+    }
+
+    while (!pq.empty()) {
+        Node current = pq.top();
+        pq.pop();
+        pq1.push_back(current);
+        path[current.x][current.y] = "#";
+        if (current.x == goal_x && current.y == goal_y) {
+            cout << "Found goal at: (" << current.x << ", " << current.y << ")" << endl;
+            break;
+        }
+
+        int dx[] = {-1, 1, 0, 0};
+        int dy[] = {0, 0, -1, 1};
+
+        for (int i = 0; i < 4; i++) {
+            int new_x = current.x + dx[i];
+            int new_y = current.y + dy[i];
+
+            if (new_x >= 0 && new_x < 4 && new_y >= 0 && new_y < 4 && graph[new_x][new_y] == 0) {
+                int g = current.g + 1; 
+                int h = heuristic(new_x, new_y, goal_x, goal_y); 
+                int f = g + h; 
+                pq.push({new_x, new_y, g, h, f,current.x,current.y});
+            }
+        }
+    }
+    
+  
+  printPath(goal_x,goal_y,pq1,optimal_path);
+  
+  
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            cout << path[i][j]<<" " ;
+        }
+        cout << endl;
+    }
+    
+    cout<<endl<<"OPTIMAL PATH"<<endl<<endl;
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            cout << optimal_path[i][j]<<" " ;
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
