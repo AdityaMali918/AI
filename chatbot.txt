@@ -1,0 +1,50 @@
+import random
+import webbrowser
+
+GREETING_RESPONSES = ["Hello!", "Hi there!", "Hey!", "Greetings!"]
+THANKS_RESPONSES = ["You're welcome!", "No problem!", "My pleasure!"]
+UNKNOWN_RESPONSES = ["Sorry, I didn't understand that.", "Could you please repeat that?"]
+
+STORE_ITEMS = ["Apples", "Bananas", "Oranges", "Grapes", "Strawberries"]
+
+def respond_to_greetings():
+    return random.choice(GREETING_RESPONSES)
+
+def respond_to_thanks():
+    return random.choice(THANKS_RESPONSES)
+
+def respond_to_unknown():
+    return random.choice(UNKNOWN_RESPONSES)
+
+def display_store_items():
+    print("Chatbot: Here are the store items:")
+    for item in STORE_ITEMS:
+        print("-", item)
+
+def open_browser():
+    # Opens the default web browser to a specified page, here Google
+    webbrowser.open('http://www.google.com')
+    print("Chatbot: I have opened the web browser for you.")
+
+def main():
+    print("Chatbot: Hi there! How can I help you today?")
+
+    while True:
+        user_input = input("You: ").lower()
+
+        if user_input in ["hello", "hi", "hey", "greetings"]:
+            print("Chatbot:", respond_to_greetings())
+        elif user_input in ["thank you", "thanks"]:
+            print("Chatbot:", respond_to_thanks())
+        elif user_input in ["items", "store", "store items"]:
+            display_store_items()  # Removed print as display_store_items itself does printing
+        elif user_input in ["open browser"]:
+            open_browser()
+        elif user_input in ["bye", "goodbye"]:
+            print("Chatbot: Goodbye! Have a great day!")
+            break
+        else:
+            print("Chatbot:", respond_to_unknown())
+
+if __name__ == "__main__":
+    main()
