@@ -1,0 +1,74 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+// Item structure to store weight and value of each item
+struct Item
+{
+    int value, weight;
+
+    // Constructor to initialize the values
+    Item(int value, int weight) : value(value), weight(weight) {}
+};
+
+// Comparison function to sort the items in descending order of their value-to-weight ratio
+bool cmp(struct Item a, struct Item b)
+{
+    double r1 = (double)a.value / a.weight;
+    double r2 = (double)b.value / b.weight;
+    return r1 > r2;
+}
+
+double fractionalKnapsack(int W, vector<Item> &items)
+{
+    // Sort the items in descending order of their value-to-weight ratio
+    sort(items.begin(), items.end(), cmp);
+
+    // Keep track of the current weight and value of the knapsack
+    int currentWeight = 0;
+    double currentValue = 0.0;
+
+    // Iterate through the items
+    for (int i = 0; i < items.size(); i++)
+    {
+        // If the current item fits in the knapsack, add it completely
+        if (currentWeight + items[i].weight <= W)
+        {
+            currentWeight += items[i].weight;
+            currentValue += items[i].value;
+        }
+        // If the current item does not fit in the knapsack, add a fraction of it
+        else
+        {
+            int remainingWeight = W - currentWeight;
+            currentValue += items[i].value * ((double) remainingWeight / items[i].weight);
+            break;
+        }
+    }
+
+    // Return the maximum value
+    return currentValue;
+}
+
+int main()
+{
+    // Set the capacity of the knapsack
+    int W = 50;
+
+    // Set the number of items
+    int n = 3;
+
+    vector<Item> items;
+
+    // Add the items to the vector
+    items.push_back(Item(60, 10));
+    items.push_back(Item(100, 20));
+    items.push_back(Item(120, 30));
+
+    // Print the maximum value
+    cout << "Maximum value: " << fractionalKnapsack(W, items) << endl;
+
+    return 0;
+}
